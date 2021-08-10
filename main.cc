@@ -5,6 +5,7 @@ namespace py = pybind11;
 #include "absolute_pose.cc"
 #include "essential_matrix.cc"
 #include "fundamental_matrix.cc"
+#include "homography_matrix.cc"
 #include "transformations.cc"
 #include "sift.cc"
 #include "pose_refinement.cc"
@@ -31,7 +32,17 @@ PYBIND11_MODULE(pycolmap, m) {
           py::arg("points2D1"), py::arg("points2D2"),
           py::arg("max_error_px") = 4.0,
           "LORANSAC + 7-point algorithm.");
-    
+
+    // Homography matrix.
+    m.def("homography_matrix_estimation", &homography_matrix_estimation,
+          py::arg("points2D1"), py::arg("points2D2"),
+          py::arg("max_error_px") = 4.0,
+          py::arg("min_inlier_ratio") = 0.01,
+          py::arg("min_num_trials") = 1000,
+          py::arg("max_num_trials") = 100000,
+          py::arg("confidence") = 0.9999,
+          "LORANSAC + 8-point algorithm.");
+
     // Image-to-world and world-to-image.
     m.def("image_to_world", &image_to_world, "Image to world transformation.");
     m.def("world_to_image", &world_to_image, "World to image transformation.");
